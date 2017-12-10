@@ -4,7 +4,6 @@ package ua.edu.sumdu.j2se.YuraLampak.tasks;
 import java.io.*;
 
 
-
 /**
  * Class LinkedTaskList
  * for

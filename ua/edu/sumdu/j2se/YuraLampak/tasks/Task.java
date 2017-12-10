@@ -1,7 +1,6 @@
 package ua.edu.sumdu.j2se.YuraLampak.tasks;
 
 
-
 /**
  * Class Task
  * for
