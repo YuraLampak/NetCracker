@@ -125,14 +125,13 @@ abstract class TaskList implements Iterable<Task>, Cloneable, Serializable {
 
     @Override
     public TaskList clone() {
-        TaskList clone;
-        Object cloned = null;
+        TaskList clone = null;
         try {
             clone = (TaskList) super.clone();
-            cloned = getDeepCloning(clone);
+            clone = getDeepCloning(this);
         } catch (Exception e) {
             e.printStackTrace();
-        } return (TaskList)cloned;
+        } return clone;
     }
 
     private TaskList getDeepCloning(Object obj) throws IOException, ClassNotFoundException {
