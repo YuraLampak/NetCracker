@@ -287,5 +287,6 @@ public class Task implements Cloneable, Serializable {
         }
         return clone;
     }
+
 }
 

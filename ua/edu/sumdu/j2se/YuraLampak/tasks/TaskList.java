@@ -143,4 +143,5 @@ abstract class TaskList implements Iterable<Task>, Cloneable, Serializable {
         ObjectInputStream ois = new ObjectInputStream(bais);
         return (TaskList) ois.readObject();
     }
+
 }

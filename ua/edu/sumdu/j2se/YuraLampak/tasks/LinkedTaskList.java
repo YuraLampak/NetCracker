@@ -139,4 +139,5 @@ public class LinkedTaskList extends TaskList {
         Node getPreviousElement() { return previousElement; }
 
     }
+
 }
