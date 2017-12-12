@@ -38,10 +38,15 @@ abstract class TaskList implements Iterable<Task>, Cloneable, Serializable {
             throw new IllegalArgumentException("from and to has not be negative");
         if (from > to || from == to)
             throw new IllegalArgumentException("to must be above from");
-        TaskList sublist = this.getClass() == ArrayTaskList.class ? new ArrayTaskList() : new LinkedTaskList();
+        TaskList sublist = null;
+        try {
+            sublist = this.getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
         for (int i = 0; i < size(); i++){
             if (this.getTask(i).nextTimeAfter(from) != -1 & to >= this.getTask(i).nextTimeAfter(from)){
-                sublist.add(getTask(i));
+                    sublist.add(getTask(i));
             }
         } return sublist;
     }
