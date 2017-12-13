@@ -12,6 +12,10 @@ package ua.edu.sumdu.j2se.YuraLampak.tasks;
 
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class Task implements Cloneable, Serializable {
 
@@ -23,17 +27,17 @@ public class Task implements Cloneable, Serializable {
     /**
      * storage time of not repeated task
      */
-    private int time;
+    private Date time;
 
     /**
      * storage initial time of repeated task.
      */
-    private int start;
+    private Date start;
 
     /**
      * storage end time of repeated task.
      */
-    private int end;
+    private Date end;
 
     /**
      * storage the interval through which the task is repeated.
@@ -56,14 +60,10 @@ public class Task implements Cloneable, Serializable {
      * @param title set title of task
      * @param time set time execution of task
      */
-    public Task(String title, int time){
-        if (time < 0){
-            throw new IllegalArgumentException("The time has not be negative");
-        } else {
-            this.title = title;
-            this.time = time;
-            this.isRepeat = false;
-        }
+    public Task (String title, Date time){
+        this.title = title;
+        this.time = time;
+        this.isRepeat = false;
     }
 
     /**
@@ -75,20 +75,12 @@ public class Task implements Cloneable, Serializable {
      * @param end set time until task is active
      * @param interval set time to repeat task
      */
-    public Task(String title, int start, int end, int interval){
+    public Task(String title, Date start, Date end, int interval){
         this.title = title;
-        if (start < 0 || end < 0){
-            throw new IllegalArgumentException("start, end has not be negative");
-        } else if (interval <= 0) {
-            throw new IllegalArgumentException("interval must be above zero");
-        } else if(end < start) {
-            throw new IllegalArgumentException("The end has not be less than start");
-        } else {
-            this.start = start;
-            this.interval = interval;
-            this.end = end;
-            isRepeat = true;
-        }
+        this.start = start;
+        this.interval = interval;
+        this.end = end;
+        isRepeat = true;
     }
 
     /**
@@ -128,9 +120,7 @@ public class Task implements Cloneable, Serializable {
      *
      * @return <tt>time</tt> if task is repeated
      */
-    public int getTime(){
-        return (isRepeated() ? start : time);
-    }
+    public Date getTime(){ return (isRepeated() ? start : time); }
 
     /**
      * Sets out time execution for not repeated task.
@@ -138,12 +128,10 @@ public class Task implements Cloneable, Serializable {
      *
      * @param time take time execution for not repeated task
      */
-    public void setTime(int time){
+    public void setTime(Date time){
         if (isRepeated())
             this.isRepeat = false;
-        if (time < 0){
-            throw new IllegalArgumentException("The time has not be negative");
-        } else this.time = time;
+        this.time = time;
     }
 
     /**
@@ -151,7 +139,7 @@ public class Task implements Cloneable, Serializable {
      *
      * @return <tt>start</tt> time if task is repeated
      */
-    public int getStartTime(){
+    public Date getStartTime(){
         return (isRepeated() ?  start : time);
     }
 
@@ -160,7 +148,7 @@ public class Task implements Cloneable, Serializable {
      *
      * @return <tt>end</tt> time if task is repeated
      */
-    public int getEndTime(){
+    public Date getEndTime(){
         return (isRepeated() ?  end : time);
     }
 
@@ -180,19 +168,12 @@ public class Task implements Cloneable, Serializable {
      * @param end take end time of repeated task
      * @param interval take time to repeat task
      */
-    public void setTime (int start, int end, int interval){
+    public void setTime (Date start, Date end, int interval){
          if(!isRepeated()) {
-             if (start < 0 || end < 0){
-                 throw new IllegalArgumentException("start, end has not be negative");
-             } else if (interval <= 0) {
-                 throw new IllegalArgumentException("interval must be above zero");
-             } else if(end < start) {
-                 throw new IllegalArgumentException("The end has not be less than start");
-             } else {
-                 this.start = start;
-                 this.end = end;
-                 this.interval = interval;
-             } this.isRepeat = true;
+             this.start = start;
+             this.end = end;
+             this.interval = interval;
+             this.isRepeat = true;
         }
     }
 
@@ -207,41 +188,40 @@ public class Task implements Cloneable, Serializable {
 
     /**
      * Returns next time execution of task after <tt>current</tt> time point
-     * for all task. If task is not active at the moment, returns -1.
+     * for all task. If task is not active at the moment, returns null.
      *
      * @param current is a point after that returns next time to execution of task
      * @return next time to execution of task if it is active status
      */
-
-    public int nextTimeAfter (int current) {
+    public Date nextTimeAfter (Date current) {
         if (active) {
             if (isRepeated()) {
-                if (current < start) {
+                if (current.before(start)) {
                     return start;
                 } else {
-                    int countCurrent = start + interval;
+                    int intervalInMilliSec = interval * 1000;
+                    Date curr = new Date();
+                    curr.setTime(start.getTime() + intervalInMilliSec);
                     do {
-                        if (current < countCurrent)
-                            return countCurrent;
-                        countCurrent += interval;
-                    } while (countCurrent <= end);
+                        if (current.before(curr))
+                            return curr;
+                        curr.setTime(curr.getTime() + intervalInMilliSec);
+                    } while (curr.compareTo(end) <= 0);
                 }
-            } else if (current < time)
+            } else if (current.before(time))
                 return time;
-        }
-        return -1;
+        } return null;
     }
 
     @Override
     public int hashCode() {
         int coeff = 33;
         int result = 1;
-        result = coeff * result + time;
         if (isRepeated()) {
-            result = coeff * result + start;
-            result = coeff * result + end;
+            result = coeff * result + (int) start.getTime();
+            result = coeff * result + (int) end.getTime();
             result = coeff * result + interval;
-        } else result = coeff * result;
+        } else result = coeff * result + (int)time.getTime();
         result = coeff * result + (isActive() ? 1 : 0);
         return result;
     }
@@ -256,9 +236,9 @@ public class Task implements Cloneable, Serializable {
             return false;
 
         if (getTitle().equals(((Task) obj).getTitle())) {
-            if (getTime() == ((Task) obj).getTime()) {
+            if (getTime().equals(((Task) obj).getTime())) {
                 if (isRepeated() == ((Task) obj).isRepeated()){
-                    if (getStartTime() == ((Task) obj).getStartTime() & getEndTime() == ((Task) obj).getEndTime() &
+                    if (getStartTime().equals(((Task) obj).getStartTime()) & getEndTime().equals(((Task) obj).getEndTime()) &
                         getRepeatInterval() == ((Task) obj).getRepeatInterval()) {
                         if (isActive() == ((Task) obj).isActive())
                             return true;
@@ -271,9 +251,15 @@ public class Task implements Cloneable, Serializable {
     @Override
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        buf.append("\n\n\tTask: ").append(getTitle()).append((isRepeated() ?
-                ("\n\tStart: " + getStartTime() + "\tEnd: " + getEndTime() + "\t\tInterval: " + getRepeatInterval()) :
-                ("\n\tTime to go: " + getTime()))).append("\n\tStatus: ").append(isActive() ? " active" : " passive");
+        SimpleDateFormat form = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+        buf.append("\n\n\tTask: ")
+                .append(getTitle())
+                .append((isRepeated() ? ("\n\tStart: " + form.format(getStartTime())
+                                            + "\tEnd: " + form.format(getEndTime())
+                                            + "\t\tInterval: " + getRepeatInterval()/1000) :
+                ("\n\tTime to go: " + getTime())))
+                .append("\n\tStatus: ")
+                .append(isActive() ? " active" : " passive");
         return String.valueOf(buf);
     }
 

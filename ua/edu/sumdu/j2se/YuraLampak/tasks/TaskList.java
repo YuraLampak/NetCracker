@@ -2,6 +2,7 @@ package ua.edu.sumdu.j2se.YuraLampak.tasks;
 
 
 import java.io.*;
+import java.util.Date;
 import java.util.Iterator;
 
 
@@ -17,39 +18,13 @@ import java.util.Iterator;
 abstract class TaskList implements Iterable<Task>, Cloneable, Serializable {
 
 
-    abstract void add(Task task) throws NullPointerException;
+    public abstract void add(Task task) throws NullPointerException;
 
-    abstract boolean remove(Task task) throws NullPointerException;
+    public abstract boolean remove(Task task) throws NullPointerException;
 
-    abstract Task getTask(int index);
+    public abstract Task getTask(int index);
 
-    abstract int size();
-
-//    /**
-//     * Returns subset of tasks which includes in range. Range is limited
-//     * by <tt>from</tt> and <tt>end</tt>.
-//     *
-//     * @param from is start of range
-//     * @param to   is end of range
-//     * @return subset of tasks which includes in range
-//     */
-    public TaskList incoming(int from, int to) {
-        if (from < 0 || to < 0)
-            throw new IllegalArgumentException("from and to has not be negative");
-        if (from > to || from == to)
-            throw new IllegalArgumentException("to must be above from");
-        TaskList sublist = null;
-        try {
-            sublist = this.getClass().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < size(); i++){
-            if (this.getTask(i).nextTimeAfter(from) != -1 & to >= this.getTask(i).nextTimeAfter(from)){
-                    sublist.add(getTask(i));
-            }
-        } return sublist;
-    }
+    public abstract int size();
 
     @Override
     public Iterator<Task> iterator(){
@@ -147,5 +122,4 @@ abstract class TaskList implements Iterable<Task>, Cloneable, Serializable {
         ObjectInputStream ois = new ObjectInputStream(bais);
         return (TaskList) ois.readObject();
     }
-
 }
