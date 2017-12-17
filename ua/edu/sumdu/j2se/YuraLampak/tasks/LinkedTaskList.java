@@ -111,7 +111,7 @@ public class LinkedTaskList extends TaskList {
      * Consists of body, link to the next element and previous in the list
      *
      */
-    private class Node implements Serializable{
+    private class Node implements Serializable {
         private Task item;
         private Node previousElement;
         private Node nextElement;

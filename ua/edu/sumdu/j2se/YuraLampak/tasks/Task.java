@@ -13,9 +13,7 @@ package ua.edu.sumdu.j2se.YuraLampak.tasks;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class Task implements Cloneable, Serializable {
 
@@ -256,7 +254,7 @@ public class Task implements Cloneable, Serializable {
                 .append(getTitle())
                 .append((isRepeated() ? ("\n\tStart: " + form.format(getStartTime())
                                             + "\tEnd: " + form.format(getEndTime())
-                                            + "\t\tInterval: " + getRepeatInterval()/1000) :
+                                            + "\t\tInterval: " + getRepeatInterval()) :
                 ("\n\tTime to go: " + getTime())))
                 .append("\n\tStatus: ")
                 .append(isActive() ? " active" : " passive");
@@ -273,6 +271,5 @@ public class Task implements Cloneable, Serializable {
         }
         return clone;
     }
-
 }
 

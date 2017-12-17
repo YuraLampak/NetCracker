@@ -19,17 +19,36 @@ public class Tasks {
      *
      * @param tasks is list of tasks, in which we carry out a selection of tasks
      * @param start is start point of range
-     * @param end is end point of range
+     * @param end   is end point of range
      * @return
      */
-    public static Iterable<Task> incoming (Iterable<Task> tasks, Date start, Date end) {
-        Set<Task> incomList = new HashSet<>();
-        Iterator<Task> tsk = tasks.iterator();
-        Task t;
-        while (tsk.hasNext()) {
-            t = tsk.next();
-            if(t.nextTimeAfter(start) != null && end.compareTo(t.nextTimeAfter(start)) >= 0)
-                incomList.add(t);
-            } return incomList;
+
+    public static Iterable<Task> incoming(Iterable<Task> tasks, Date start, Date end) {
+        Iterable<Task> incomList = new HashSet<>();
+        Iterator<Task> itr = tasks.iterator();
+        while (itr.hasNext()) {
+            Task task = itr.next();
+            if (task.nextTimeAfter(start) != null && end.compareTo(task.nextTimeAfter(start)) >= 0)
+                ((HashSet<Task>)incomList).add(task);
+        } return incomList;
+    }
+
+    public static SortedMap<Date, Set<Task>> calendar(Iterable<Task> tasks, Date start, Date end) {
+        SortedMap<Date, Set<Task>> sortMap = new TreeMap<>();
+        Iterable<Task> incomList = incoming(tasks, start, end);
+        Iterator<Task> itr = incomList.iterator();
+        while (itr.hasNext()){
+            Task task = itr.next();
+            Date date = task.nextTimeAfter(start);
+            while(date != null && date.compareTo(end) <= 0) {
+                if (sortMap.containsKey(date)) {
+                    sortMap.get(date).add(task);
+                } else {
+                    Set<Task> temp = new HashSet<>();
+                    temp.add(task);
+                    sortMap.put(date, temp);
+                } date = task.nextTimeAfter(date);
+            }
+        } return sortMap;
     }
 }
