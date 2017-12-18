@@ -56,9 +56,9 @@ public class Task implements Cloneable, Serializable {
      * Constructs not repeated task with the initial title and time execution.
      *
      * @param title set title of task
-     * @param time set time execution of task
+     * @param time  set time execution of task
      */
-    public Task (String title, Date time){
+    public Task(String title, Date time) {
         this.title = title;
         this.time = time;
         this.isRepeat = false;
@@ -68,12 +68,12 @@ public class Task implements Cloneable, Serializable {
      * Constructs repeated task with the initial time,
      * end time and interval to repeat
      *
-     * @param title set title of task
-     * @param start set time to begin this task
-     * @param end set time until task is active
+     * @param title    set title of task
+     * @param start    set time to begin this task
+     * @param end      set time until task is active
      * @param interval set time to repeat task
      */
-    public Task(String title, Date start, Date end, int interval){
+    public Task(String title, Date start, Date end, int interval) {
         this.title = title;
         this.start = start;
         this.interval = interval;
@@ -86,21 +86,25 @@ public class Task implements Cloneable, Serializable {
      *
      * @return the title of this task
      */
-    public String getTitle(){ return title; }
+    public String getTitle() {
+        return title;
+    }
 
     /**
      * Sets out the title of this task.
      *
      * @param title take title of this task
      */
-    public void setTitle(String title){ this.title = title; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     /**
      * Returns <tt>true</tt> if task status is active.
      *
      * @return <tt>true</tt> if task status is active
      */
-    public boolean isActive(){
+    public boolean isActive() {
         return active;
     }
 
@@ -109,7 +113,7 @@ public class Task implements Cloneable, Serializable {
      *
      * @param active take the status of this task
      */
-    public void setActive(boolean active){
+    public void setActive(boolean active) {
         this.active = active;
     }
 
@@ -118,7 +122,9 @@ public class Task implements Cloneable, Serializable {
      *
      * @return <tt>time</tt> if task is repeated
      */
-    public Date getTime(){ return (isRepeated() ? start : time); }
+    public Date getTime() {
+        return (isRepeated() ? start : time);
+    }
 
     /**
      * Sets out time execution for not repeated task.
@@ -126,7 +132,7 @@ public class Task implements Cloneable, Serializable {
      *
      * @param time take time execution for not repeated task
      */
-    public void setTime(Date time){
+    public void setTime(Date time) {
         if (isRepeated())
             this.isRepeat = false;
         this.time = time;
@@ -137,8 +143,8 @@ public class Task implements Cloneable, Serializable {
      *
      * @return <tt>start</tt> time if task is repeated
      */
-    public Date getStartTime(){
-        return (isRepeated() ?  start : time);
+    public Date getStartTime() {
+        return (isRepeated() ? start : time);
     }
 
     /**
@@ -146,8 +152,8 @@ public class Task implements Cloneable, Serializable {
      *
      * @return <tt>end</tt> time if task is repeated
      */
-    public Date getEndTime(){
-        return (isRepeated() ?  end : time);
+    public Date getEndTime() {
+        return (isRepeated() ? end : time);
     }
 
     /**
@@ -155,23 +161,23 @@ public class Task implements Cloneable, Serializable {
      *
      * @return <tt>end</tt> time to repeate if task is repeated
      */
-    public int getRepeatInterval(){
+    public int getRepeatInterval() {
         return (isRepeated() ? interval : 0);
     }
 
     /**
      * Sets out parametrs of repeated task if it is.
      *
-     * @param start take initial time of repeated task
-     * @param end take end time of repeated task
+     * @param start    take initial time of repeated task
+     * @param end      take end time of repeated task
      * @param interval take time to repeat task
      */
-    public void setTime (Date start, Date end, int interval){
-         if(!isRepeated()) {
-             this.start = start;
-             this.end = end;
-             this.interval = interval;
-             this.isRepeat = true;
+    public void setTime(Date start, Date end, int interval) {
+        if (!isRepeated()) {
+            this.start = start;
+            this.end = end;
+            this.interval = interval;
+            this.isRepeat = true;
         }
     }
 
@@ -180,7 +186,7 @@ public class Task implements Cloneable, Serializable {
      *
      * @return <tt>true</tt> if task is repeated.
      */
-    public boolean isRepeated(){
+    public boolean isRepeated() {
         return isRepeat;
     }
 
@@ -191,7 +197,7 @@ public class Task implements Cloneable, Serializable {
      * @param current is a point after that returns next time to execution of task
      * @return next time to execution of task if it is active status
      */
-    public Date nextTimeAfter (Date current) {
+    public Date nextTimeAfter(Date current) {
         if (active) {
             if (isRepeated()) {
                 if (current.before(start)) {
@@ -208,9 +214,15 @@ public class Task implements Cloneable, Serializable {
                 }
             } else if (current.before(time))
                 return time;
-        } return null;
+        }
+        return null;
     }
 
+    /**
+     * Overrides method to generate hashcode for each task.
+     *
+     * @return generics hashcode
+     */
     @Override
     public int hashCode() {
         int coeff = 33;
@@ -219,11 +231,16 @@ public class Task implements Cloneable, Serializable {
             result = coeff * result + (int) start.getTime();
             result = coeff * result + (int) end.getTime();
             result = coeff * result + interval;
-        } else result = coeff * result + (int)time.getTime();
+        } else result = coeff * result + (int) time.getTime();
         result = coeff * result + (isActive() ? 1 : 0);
         return result;
     }
 
+    /**
+     * This method compare two objects by conditions and fields.
+     * @param obj is object which is comparing with
+     * @return value <tt>true</tt> if they is compare and <tt>false</tt> if isn't.
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null)
@@ -232,20 +249,26 @@ public class Task implements Cloneable, Serializable {
             return true;
         if (this.getClass() != obj.getClass())
             return false;
-
         if (getTitle().equals(((Task) obj).getTitle())) {
             if (getTime().equals(((Task) obj).getTime())) {
-                if (isRepeated() == ((Task) obj).isRepeated()){
+                if (isRepeated() == ((Task) obj).isRepeated()) {
                     if (getStartTime().equals(((Task) obj).getStartTime()) & getEndTime().equals(((Task) obj).getEndTime()) &
-                        getRepeatInterval() == ((Task) obj).getRepeatInterval()) {
+                            getRepeatInterval() == ((Task) obj).getRepeatInterval()) {
                         if (isActive() == ((Task) obj).isActive())
                             return true;
                     }
                 } else return isActive() == ((Task) obj).isActive();
             }
-        } return false;
+        }
+        return false;
     }
 
+    /**
+     * By this method configuring linear mapping of tasks.
+     * Include a maximum information in a convenient form.
+     *
+     * @return general information about task
+     */
     @Override
     public String toString() {
         StringBuffer buf = new StringBuffer();
@@ -253,14 +276,19 @@ public class Task implements Cloneable, Serializable {
         buf.append("\n\n\tTask: ")
                 .append(getTitle())
                 .append((isRepeated() ? ("\n\tStart: " + form.format(getStartTime())
-                                            + "\tEnd: " + form.format(getEndTime())
-                                            + "\t\tInterval: " + getRepeatInterval()) :
-                ("\n\tTime to go: " + getTime())))
+                        + "\tEnd: " + form.format(getEndTime())
+                        + "\t\tInterval: " + getRepeatInterval()) :
+                        ("\n\tTime to go: " + getTime())))
                 .append("\n\tStatus: ")
                 .append(isActive() ? " active" : " passive");
         return String.valueOf(buf);
     }
 
+    /**
+     * Method clone() is realize cloning tasks
+     *
+     * @return clone of current task
+     */
     @Override
     public Task clone() {
         Task clone = null;

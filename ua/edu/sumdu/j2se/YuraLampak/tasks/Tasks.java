@@ -22,21 +22,38 @@ public class Tasks {
      * @param end   is end point of range
      * @return
      */
-
     public static Iterable<Task> incoming(Iterable<Task> tasks, Date start, Date end) {
-        Iterable<Task> incomList = new HashSet<>();
+        Iterable<Task> data = null;
+        try {
+            data = tasks.getClass().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         Iterator<Task> itr = tasks.iterator();
         while (itr.hasNext()) {
             Task task = itr.next();
             if (task.nextTimeAfter(start) != null && end.compareTo(task.nextTimeAfter(start)) >= 0)
-                ((HashSet<Task>)incomList).add(task);
-        } return incomList;
+                ((Set<Task>)data).add(task);
+        } return data;
     }
+
+    /**
+     * Build a calendar of tasks for a given period from <tt>start</tt> to <tt>end</tt>. Represents table where
+     * each date corresponds to the set the tasks to be performed at that time, at which one task can meet
+     * in accordance with several dates if it has to be executed several times during the specified period.
+     *
+     * @param tasks is base list of tasks to storage all tasks
+     * @param start is a start point of calendar period
+     * @param end is end point of calendar period
+     * @return table with tasks which runs on preset time
+     */
 
     public static SortedMap<Date, Set<Task>> calendar(Iterable<Task> tasks, Date start, Date end) {
         SortedMap<Date, Set<Task>> sortMap = new TreeMap<>();
-        Iterable<Task> incomList = incoming(tasks, start, end);
-        Iterator<Task> itr = incomList.iterator();
+        Iterable<Task> data = incoming(tasks, start, end);
+        Iterator<Task> itr = data.iterator();
         while (itr.hasNext()){
             Task task = itr.next();
             Date date = task.nextTimeAfter(start);

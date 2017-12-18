@@ -1,7 +1,6 @@
 package ua.edu.sumdu.j2se.YuraLampak.tasks;
 
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,9 +20,8 @@ public class TaskIO {
         try {
             dos.writeInt(tasks.size());
             Iterator<Task> itr = tasks.iterator();
-            while (itr.hasNext()){
+            while (itr.hasNext()) {
                 Task task = itr.next();
-                dos.writeInt(task.getTitle().length());
                 dos.writeUTF(task.getTitle());
                 dos.writeBoolean(task.isActive());
                 dos.writeInt(task.getRepeatInterval());
@@ -31,10 +29,16 @@ public class TaskIO {
                     dos.writeLong(task.getStartTime().getTime());
                     dos.writeLong(task.getEndTime().getTime());
                 } else dos.writeLong(task.getTime().getTime());
-            } dos.flush();
-            dos.close();
+            }
+            dos.flush();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                dos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -58,31 +62,51 @@ public class TaskIO {
                     task.setActive(active);
                     tasks.add(task);
                 }
-            } dis.close();
+            }
         } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                dis.close();
+            } catch (IOException e) {
                 e.printStackTrace();
+            }
         }
     }
 
     public static void writeBinary(TaskList tasks, File file) {
+        OutputStream out = null;
         try {
-            OutputStream out = new FileOutputStream(file);
+            out = new FileOutputStream(file);
             write(tasks, out);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public static void readBinary(TaskList tasks, File file) {
+        InputStream in = null;
         try {
-            InputStream in = new FileInputStream(file);
+            in = new FileInputStream(file);
             read(tasks, in);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private static void intervalFormat(int seconds, PrintWriter pw)  {
+    private static void intervalFormat(int seconds, PrintWriter pw) {
         int currentDay = seconds / DAY;
         int currentHour = seconds % DAY / HOUR;
         int currentMinute = seconds % HOUR / MINUTE;
@@ -119,7 +143,7 @@ public class TaskIO {
     public static void write(TaskList tasks, Writer out) {
         PrintWriter pw = new PrintWriter(new BufferedWriter(out));
         Iterator<Task> itr = tasks.iterator();
-        while (itr.hasNext()){
+        while (itr.hasNext()) {
             Task task = itr.next();
             String title = task.getTitle();
             pw.print("\"" + title + "\"");
@@ -142,15 +166,16 @@ public class TaskIO {
             if (itr.hasNext()) {
                 pw.print(";\n");
             }
-        } pw.print(".\n");
+        }
+        pw.print(".\n");
         pw.println("");
         pw.flush();
         pw.close();
     }
 
     public static void read(TaskList tasks, Reader in) {
-        BufferedReader buffer = new BufferedReader(in);
         String line = "";
+        BufferedReader buffer = new BufferedReader(in);
         try {
             while (((line = buffer.readLine()) != null) && (buffer.ready())) {
                 int startIndex = line.indexOf("\"");
@@ -164,7 +189,7 @@ public class TaskIO {
                     task.setActive(active);
                     tasks.add(task);
                 } else {
-                    Date startTime = readDate(line, "from [", endIndex );
+                    Date startTime = readDate(line, "from [", endIndex);
                     Date endTime = readDate(line, "to [", endIndex);
 
                     int startInterval = line.indexOf("every [", endIndex);
@@ -183,23 +208,31 @@ public class TaskIO {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private static Date readDate(String line, String s, int index) {
         int currentIndex = line.indexOf("]", line.indexOf(s, index));
         String inDate = line.substring(currentIndex - "yyyy-MM-dd HH:mm:ss:SSS".length(), currentIndex);
-
         Date date = null;
         try {
             date = DATE_FORMAT.parse(inDate);
         } catch (ParseException e) {
             e.printStackTrace();
-        } return date;
+        }
+        return date;
     }
 
     private static int readInterval(String current, String line) {
-        if (line.indexOf(current) <= 0) {return 0;}
+        if (line.indexOf(current) <= 0) {
+            return 0;
+        }
         int currentIndex = line.indexOf(current) - 2;
 
         String result = "";
@@ -208,25 +241,21 @@ public class TaskIO {
             if (!Character.isDigit(ch)) break;
             String temp = Character.toString(ch);
             result = temp.concat(result);
-        } return Integer.parseInt(result);
+        }
+        return Integer.parseInt(result);
     }
 
     public static void writeText(TaskList tasks, File file) {
-        PrintWriter pw = null;
-        try {
-            pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+        try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)))) {
             write(tasks, pw);
         } catch (IOException e) {
             e.printStackTrace();
-        } pw.close();
+        }
     }
 
     public static void readText(TaskList tasks, File file) {
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(file));
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             read(tasks, br);
-            br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
