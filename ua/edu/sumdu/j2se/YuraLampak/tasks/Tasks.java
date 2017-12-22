@@ -35,7 +35,7 @@ public class Tasks {
         while (itr.hasNext()) {
             Task task = itr.next();
             if (task.nextTimeAfter(start) != null && end.compareTo(task.nextTimeAfter(start)) >= 0)
-                ((Set<Task>)data).add(task);
+                ((Collection<Task>)data).add(task);
         } return data;
     }
 
