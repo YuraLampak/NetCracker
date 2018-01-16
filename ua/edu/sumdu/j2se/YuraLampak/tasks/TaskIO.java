@@ -15,9 +15,9 @@ public class TaskIO {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
 
-    public static void write(TaskList tasks, OutputStream out) {
-        DataOutputStream dos = new DataOutputStream(out);
-        try {
+    public static void write(TaskList tasks, OutputStream out) throws TaskException {
+
+        try (DataOutputStream dos = new DataOutputStream(out)){
             dos.writeInt(tasks.size());
             Iterator<Task> itr = tasks.iterator();
             while (itr.hasNext()) {
@@ -32,19 +32,13 @@ public class TaskIO {
             }
             dos.flush();
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                dos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            throw new TaskException("IOException in method write(): " + e);
         }
     }
 
-    public static void read(TaskList tasks, InputStream in) {
-        DataInputStream dis = new DataInputStream(in);
-        try {
+    public static void read(TaskList tasks, InputStream in) throws TaskException {
+
+        try (DataInputStream dis = new DataInputStream(in)) {
             int size = dis.readInt();
             for (int i = 0; i < size; i++) {
                 String title = dis.readUTF();
@@ -64,45 +58,27 @@ public class TaskIO {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                dis.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            throw new TaskException("IOException in static method read(): " + e);
         }
     }
 
-    public static void writeBinary(TaskList tasks, File file) {
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(file);
+    public static void writeBinary(TaskList tasks, File file) throws TaskException {
+        try (OutputStream out = new FileOutputStream(file)){
             write(tasks, out);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            throw new TaskException("Exception in static method writeBinary(): " + e);
+        } catch (IOException e){
+            throw new TaskException("IOException in static method writeBinary(): " + e);
         }
     }
 
-    public static void readBinary(TaskList tasks, File file) {
-        InputStream in = null;
-        try {
-            in = new FileInputStream(file);
+    public static void readBinary(TaskList tasks, File file) throws TaskException{
+        try (InputStream in = new FileInputStream(file)){
             read(tasks, in);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            throw new TaskException("Exception in static method readBinary(): " + e);
+        } catch (IOException e){
+            throw new TaskException("IOException in static method readBinary(): " + e);
         }
     }
 
@@ -173,10 +149,9 @@ public class TaskIO {
         pw.close();
     }
 
-    public static void read(TaskList tasks, Reader in) {
+    public static void read(TaskList tasks, Reader in) throws TaskException {
         String line = "";
-        BufferedReader buffer = new BufferedReader(in);
-        try {
+        try (BufferedReader buffer = new BufferedReader(in);){
             while (((line = buffer.readLine()) != null) && (buffer.ready())) {
                 int startIndex = line.indexOf("\"");
                 int endIndex = line.lastIndexOf("\"");
@@ -207,26 +182,19 @@ public class TaskIO {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            throw new TaskException("IOException in static method readBinary(): " + e);
         }
     }
 
-    private static Date readDate(String line, String s, int index) {
+    private static Date readDate(String line, String s, int index) throws TaskException {
         int currentIndex = line.indexOf("]", line.indexOf(s, index));
         String inDate = line.substring(currentIndex - "yyyy-MM-dd HH:mm:ss:SSS".length(), currentIndex);
-        Date date = null;
+        Date date;
         try {
             date = DATE_FORMAT.parse(inDate);
         } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date;
+            throw new TaskException("Incorrect parsing in static method readDate(): " + e);
+        } return date;
     }
 
     private static int readInterval(String current, String line) {
@@ -234,7 +202,6 @@ public class TaskIO {
             return 0;
         }
         int currentIndex = line.indexOf(current) - 2;
-
         String result = "";
         for (int i = currentIndex; i >= 0; i--) {
             char ch = line.charAt(i);
@@ -245,19 +212,19 @@ public class TaskIO {
         return Integer.parseInt(result);
     }
 
-    public static void writeText(TaskList tasks, File file) {
+    public static void writeText(TaskList tasks, File file) throws TaskException {
         try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)))) {
             write(tasks, pw);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new TaskException("IOException in static method writeText(): " + e);
         }
     }
 
-    public static void readText(TaskList tasks, File file) {
+    public static void readText(TaskList tasks, File file) throws TaskException {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             read(tasks, br);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new TaskException("IOException in static method readText(): " + e);
         }
     }
 }

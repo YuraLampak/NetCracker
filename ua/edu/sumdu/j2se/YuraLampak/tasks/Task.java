@@ -73,7 +73,10 @@ public class Task implements Cloneable, Serializable {
      * @param end      set time until task is active
      * @param interval set time to repeat task
      */
-    public Task(String title, Date start, Date end, int interval) {
+    public Task(String title, Date start, Date end, int interval) throws TaskException {
+        if (interval < 0){
+            throw new TaskException("interval is incorrect");
+        }
         this.title = title;
         this.start = start;
         this.interval = interval;
@@ -172,8 +175,11 @@ public class Task implements Cloneable, Serializable {
      * @param end      take end time of repeated task
      * @param interval take time to repeat task
      */
-    public void setTime(Date start, Date end, int interval) {
+    public void setTime(Date start, Date end, int interval) throws TaskException {
         if (!isRepeated()) {
+            if (interval < 0){
+                throw new TaskException("interval is incorrect");
+            }
             this.start = start;
             this.end = end;
             this.interval = interval;
@@ -295,7 +301,7 @@ public class Task implements Cloneable, Serializable {
         try {
             clone = (Task) super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            System.out.println("In method clone(): " + e.getMessage());
         }
         return clone;
     }
