@@ -14,9 +14,7 @@ public class TaskIO {
     private static final int MINUTE = 60;
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
-
     public static void write(TaskList tasks, OutputStream out) throws TaskException {
-
         try (DataOutputStream dos = new DataOutputStream(out)){
             dos.writeInt(tasks.size());
             Iterator<Task> itr = tasks.iterator();
@@ -37,7 +35,6 @@ public class TaskIO {
     }
 
     public static void read(TaskList tasks, InputStream in) throws TaskException {
-
         try (DataInputStream dis = new DataInputStream(in)) {
             int size = dis.readInt();
             for (int i = 0; i < size; i++) {

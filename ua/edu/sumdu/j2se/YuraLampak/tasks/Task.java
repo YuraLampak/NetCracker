@@ -220,8 +220,7 @@ public class Task implements Cloneable, Serializable {
                 }
             } else if (current.before(time))
                 return time;
-        }
-        return null;
+        } return null;
     }
 
     /**
@@ -265,8 +264,7 @@ public class Task implements Cloneable, Serializable {
                     }
                 } else return isActive() == ((Task) obj).isActive();
             }
-        }
-        return false;
+        } return false;
     }
 
     /**
@@ -302,8 +300,7 @@ public class Task implements Cloneable, Serializable {
             clone = (Task) super.clone();
         } catch (CloneNotSupportedException e) {
             System.out.println("In method clone(): " + e.getMessage());
-        }
-        return clone;
+        } return clone;
     }
 }
 

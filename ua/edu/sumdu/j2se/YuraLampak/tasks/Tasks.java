@@ -22,14 +22,12 @@ public class Tasks {
      * @param end   is end point of range
      * @return
      */
-    public static Iterable<Task> incoming(Iterable<Task> tasks, Date start, Date end) {
+    public static Iterable<Task> incoming(Iterable<Task> tasks, Date start, Date end) throws TaskException {
         Iterable<Task> data = null;
         try {
             data = tasks.getClass().newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new TaskException("Exception in static method incoming(): " + e);
         }
         Iterator<Task> itr = tasks.iterator();
         while (itr.hasNext()) {
@@ -50,7 +48,7 @@ public class Tasks {
      * @return table with tasks which runs on preset time
      */
 
-    public static SortedMap<Date, Set<Task>> calendar(Iterable<Task> tasks, Date start, Date end) {
+    public static SortedMap<Date, Set<Task>> calendar(Iterable<Task> tasks, Date start, Date end) throws TaskException {
         SortedMap<Date, Set<Task>> sortMap = new TreeMap<>();
         Iterable<Task> data = incoming(tasks, start, end);
         Iterator<Task> itr = data.iterator();
