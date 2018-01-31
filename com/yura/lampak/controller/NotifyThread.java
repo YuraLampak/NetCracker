@@ -1,10 +1,10 @@
-package ua.edu.sumdu.j2se.YuraLampak.tasks.controller;
+package com.yura.lampak.controller;
 
-import ua.edu.sumdu.j2se.YuraLampak.tasks.model.Task;
-import ua.edu.sumdu.j2se.YuraLampak.tasks.model.TaskException;
-import ua.edu.sumdu.j2se.YuraLampak.tasks.model.TaskList;
-import ua.edu.sumdu.j2se.YuraLampak.tasks.model.Tasks;
-import ua.edu.sumdu.j2se.YuraLampak.tasks.view.ConsoleView;
+import com.yura.lampak.model.Task;
+import com.yura.lampak.model.TaskException;
+import com.yura.lampak.model.TaskList;
+import com.yura.lampak.model.Tasks;
+import com.yura.lampak.view.ConsoleView;
 
 
 import java.util.*;

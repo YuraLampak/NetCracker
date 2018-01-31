@@ -1,7 +1,7 @@
-package ua.edu.sumdu.j2se.YuraLampak.tasks.view;
+package com.yura.lampak.view;
 
-import ua.edu.sumdu.j2se.YuraLampak.tasks.model.Task;
-import ua.edu.sumdu.j2se.YuraLampak.tasks.model.TaskList;
+import com.yura.lampak.model.Task;
+import com.yura.lampak.model.TaskList;
 
 import java.util.*;
 

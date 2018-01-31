@@ -1,7 +1,8 @@
-package ua.edu.sumdu.j2se.YuraLampak.tasks.view;
+package com.yura.lampak.view;
 
-import ua.edu.sumdu.j2se.YuraLampak.tasks.model.Task;
-import ua.edu.sumdu.j2se.YuraLampak.tasks.model.TaskList;
+
+import com.yura.lampak.model.Task;
+import com.yura.lampak.model.TaskList;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -54,14 +55,14 @@ public class ConsoleView implements View {
         System.out.println("Title: \t 0.Back");
     }
 
-    public void inputTime() { System.out.println("Date:(day.month.year hours:minutes:seconds) "); }
+    public void inputTime() { System.out.println("Date:(year-month-day hours:minutes:seconds) "); }
 
     public void inputStartTime() {
-        System.out.println("start time:(day.month.year hours:minutes:seconds)");
+        System.out.println("start time:(year-month-day hours:minutes:seconds)");
     }
 
     public void inputEndTime() {
-        System.out.println("end time:(day.month.year hours:minutes:seconds)");
+        System.out.println("end time:(year-month-day hours:minutes:seconds)");
     }
 
     public void errorDate(){

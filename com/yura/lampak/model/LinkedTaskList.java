@@ -1,4 +1,4 @@
-package ua.edu.sumdu.j2se.YuraLampak.tasks.model;
+package com.yura.lampak.model;
 
 
 import java.io.*;

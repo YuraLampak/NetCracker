@@ -1,14 +1,17 @@
-package ua.edu.sumdu.j2se.YuraLampak.tasks.controller;
+package com.yura.lampak.controller;
 
 
 
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
+import com.yura.lampak.model.*;
+import com.yura.lampak.view.*;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
-import ua.edu.sumdu.j2se.YuraLampak.tasks.model.*;
-import ua.edu.sumdu.j2se.YuraLampak.tasks.view.*;
 
 
 public class ConsoleController implements Controller {
@@ -17,12 +20,20 @@ public class ConsoleController implements Controller {
     private String title;
     private Date time, start, end;
     private int interval;
-    private static final File file = new File(".\\src\\main\\java\\TaskList.txt");
+    private static final File file = new File("TaskList.txt").getAbsoluteFile();
+    private static final Logger logger = LogManager.getLogger(ConsoleController.class);
 
 
     public ConsoleController(Model theModel, ConsoleView theView) throws TaskException {
         this.theModel = theModel;
         this.theView = theView;
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                logger.error("creating file is failed", e);
+            }
+        }
         TaskList tempList = new LinkedTaskList();
         try {
             TaskIO.readText(tempList, file);
@@ -44,13 +55,17 @@ public class ConsoleController implements Controller {
     }
 
     private void writeListToFile() throws TaskException {
-        TaskIO.writeText(theModel.getTaskList(), file);
+        try {
+            TaskIO.writeText(theModel.getTaskList(), file);
+        } catch (Exception e){
+            logger.error("writing file is failed", e);
+        }
+
     }
 
     @Override
     public void execute() throws TaskException {
         int temp;
-        //theModel.setTaskList(readListFromFile());
         theView.printMenu();
         switch (getParseItem()) {
             case 0:
@@ -75,6 +90,7 @@ public class ConsoleController implements Controller {
                     theModel.getTaskList().add(theModel.getTask());
                     writeListToFile();
                     theView.successfulCreateTask();
+                    logger.info("created task");
                     backAction();
                     execute();
                     break;
@@ -87,6 +103,7 @@ public class ConsoleController implements Controller {
                 theModel.getTaskList().add(theModel.getTask());
                 writeListToFile();
                 theView.successfulCreateTask();
+                logger.info("created task");
                 backAction();
                 execute();
                 break;
@@ -125,7 +142,6 @@ public class ConsoleController implements Controller {
                     break;
                 }
                 removeTask(theModel.getTaskList().getTask(temp));
-                //theView.successfulRemoveTask();
                 backAction();
                 execute();
                 break;
@@ -349,5 +365,4 @@ public class ConsoleController implements Controller {
     private boolean checkForBack(int var) {
         return var == -1;
     }
-
 }
