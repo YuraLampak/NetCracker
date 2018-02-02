@@ -32,7 +32,6 @@ public class NotifyThread extends Thread {
         Date currentTime, startTime = new Date();
         Date endTime = new Date();
         int balanceTime = 1000;
-        startTime.setTime(startTime.getTime() - balanceTime);
         while (true) {
             if (this.isInterrupted()) {
                 break;
@@ -40,13 +39,14 @@ public class NotifyThread extends Thread {
             try {
                 taskList = controller.readListFromFile();
                 currentTime = new Date();
+                startTime.setTime(currentTime.getTime() - balanceTime);
                 endTime.setTime(currentTime.getTime() + balanceTime);
                 notifyMap = Tasks.calendar(taskList, startTime, endTime);
                 Iterator<Task> itr_task;
                 for (Map.Entry<Date, Set<Task>> entry : notifyMap.entrySet()) {
                     itr_task = entry.getValue().iterator();
                     while (itr_task.hasNext()) {
-                        if (itr_task.next().isActive() & entry.getKey().compareTo(currentTime) == 0) {
+                        if (itr_task.next().isActive() & entry.getKey().compareTo(currentTime)==0) {
                             notifyUser(entry.getValue());
                         }
                     }
@@ -71,11 +71,12 @@ public class NotifyThread extends Thread {
                 }
             }
         }
-        try {                               //этот участок кода для того, чтобы не выводилось оповещение несколько раз
-            Thread.sleep(10);         // подряд для одного и того же сета тасков
+        try {
+            Thread.sleep(10);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
     }
 }
 

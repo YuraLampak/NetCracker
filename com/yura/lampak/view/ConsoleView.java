@@ -10,11 +10,11 @@ import java.util.*;
 public class ConsoleView implements View {
     private static final String createItem = "1. Create a new task";
     private static final String changeItem = "2. Change existing task";
-    private static final String removeItem = "3. Remove Task";
+    private static final String removeItem = "3. Remove task";
     private static final String showTasksItem = "4. Print task list";
     private static final String showCalendarItem = "5. Print calendar of tasks for period";
     private static final String exitItem = "0. Exit";
-    private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy HH:mm");
     private Scanner scanner;
 
     public ConsoleView() {
@@ -38,8 +38,9 @@ public class ConsoleView implements View {
     }
 
     @Override
-    public void printTaskList(TaskList task) {
-        System.out.println(task.toString());
+    public void printTaskList(TaskList taskList, int size) {
+        System.out.println(taskList.toString());
+        System.out.println("size: " + size);
     }
 
     @Override
@@ -51,40 +52,40 @@ public class ConsoleView implements View {
         return format;
     }
 
+    public void outEmptyList(){
+        System.out.println("task list is empty, try to create a new task ");
+    }
+
     public void inputTitle(){
         System.out.println("Title: \t 0.Back");
     }
 
-    public void inputTime() { System.out.println("Date:(year-month-day hours:minutes:seconds) "); }
+    public void inputTime() { System.out.println("date:(dd.mm.yy hh:mm:ss)"); }
 
-    public void inputStartTime() {
-        System.out.println("start time:(year-month-day hours:minutes:seconds)");
-    }
+    public void inputStartTime() { System.out.println("start date:(dd.mm.yy hh:mm:ss)"); }
 
     public void inputEndTime() {
-        System.out.println("end time:(year-month-day hours:minutes:seconds)");
+        System.out.println("end date:(dd.mm.yy hh:mm:ss)");
     }
 
-    public void errorDate(){
-        System.out.println("enter correct date!");
-    }
+    public void errorDate(){ System.out.println("enter correct date!"); }
+
+    public void errorEndBeforeStart(){ System.out.println("end date must be above start date! "); }
 
     public void inputInterval() {
-        System.out.println("interval: ");
+        System.out.println("interval (in minutes): ");
     }
 
     public void errorInterval(){
         System.out.println("enter correct interval!");
     }
 
-    public void inputState() { System.out.println("Active: (true/false)"); }
+    public void inputState() { System.out.println("activate: (true/false)"); }
 
-    public void errorState(){
-        System.out.println("enter correct state(only true or false)");
-    }
+    public void errorState(){ System.out.println("enter correct state(only true or false)"); }
 
     public void inputIsRepeated() {
-        System.out.println("Is repeated?: (true/false)");
+        System.out.println("is repeated?: (true/false)");
     }
 
     public String getUserInput(){
@@ -95,12 +96,14 @@ public class ConsoleView implements View {
 
     public void errorValue(){ System.out.println("enter correct value!"); }
 
-    public void inputExistTask() { System.out.println("\nSelect one of the tasks \t 0. Back"); }
+    public void inputExistTask() { System.out.println("\nSelect a task by number \t 0. Back to menu"); }
 
-    public void errorExistTask() { System.out.println("enter correct number of task"); }
+    public void invalidInputNumber() { System.out.println("enter only integer number!"); }
+
+    public void inputRemove(){ System.out.println("\n1. Remove one task\n2. Remove all tasks\n\n0. Back"); }
 
     public void inputOptionToChangeTask(boolean isRep){
-        System.out.println("\n1. Change title");
+        System.out.println("1. Change title");
         if (isRep){
             System.out.println("2. Change start time");
             System.out.println("3. Change end time");
@@ -132,23 +135,25 @@ public class ConsoleView implements View {
     }
 
     public void successfulRemoveTask(){
-        System.out.println("Remove is successful");
+        System.out.println("removed successful");
     }
 
-    public void fallingRemove(){
-        System.out.println("this task is not exist in this task list!");
-    }
+    public void fallingRemove(){ System.out.println("this task is not exist in task list!"); }
 
     public void inputPeriodForCalendar(){
         System.out.println("Create calendar: ");
         System.out.println("1. For a day");
-        System.out.println("2. For a three day");
+        System.out.println("2. For a three days");
         System.out.println("3. For a week");
-        System.out.println("4. For the interval you specify ");
+        System.out.println("4. For a month");
+        System.out.println("\n0. Back to menu");
     }
 
     public void printTasksToGo(Set<Task> tasks){
-        System.out.println("Alarm! Time to go next tasks : " + tasks.toString() + "\nstill working with the program..");
+        System.out.println("***********************************");
+        System.out.println("Alarm! Time to go next tasks :\n\n ");
+        System.out.println(tasks.toString());
+        System.out.println("\nstill working with the program..");
+        System.out.println("***********************************");
     }
-
 }

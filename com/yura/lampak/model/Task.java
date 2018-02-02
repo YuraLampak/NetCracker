@@ -182,7 +182,7 @@ public class Task implements Cloneable, Serializable {
             }
             this.start = start;
             this.end = end;
-            this.interval = interval;
+            this.interval = interval*60;
             this.isRepeat = true;
         }
     }
@@ -276,15 +276,15 @@ public class Task implements Cloneable, Serializable {
     @Override
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        SimpleDateFormat form = new SimpleDateFormat("dd.MM.yyyy hh:mm");
-        buf.append("\n\n\tTask: ")
+        SimpleDateFormat form = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        buf.append("\tTask ")
                 .append(getTitle())
                 .append((isRepeated() ? ("\n\tStart: " + form.format(getStartTime())
                         + "\tEnd: " + form.format(getEndTime())
-                        + "\t\tInterval: " + getRepeatInterval()) :
+                        + "\tInterval: " + getRepeatInterval()/60 + " minute") :
                         ("\n\tTime to go: " + getTime())))
-                .append("\n\tStatus: ")
-                .append(isActive() ? " active" : " passive");
+                .append("\n\tState: ")
+                .append(isActive() ? " active\n\n" : " passive\n\n");
         return String.valueOf(buf);
     }
 

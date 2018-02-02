@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.Iterator;
 
 
+
 /**
  * Class TaskList
  * for
@@ -20,6 +21,8 @@ public abstract class TaskList implements Iterable<Task>, Cloneable, Serializabl
     public abstract void add(Task task) throws NullPointerException;
 
     public abstract boolean remove(Task task) throws NullPointerException;
+
+    public abstract void removeAll();
 
     public abstract Task getTask(int index);
 
@@ -94,12 +97,16 @@ public abstract class TaskList implements Iterable<Task>, Cloneable, Serializabl
 
     @Override
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuffer buffer = new StringBuffer();
+        int count = 1;
         Iterator itr = iterator();
-        buf.append("\nTaskList: ");
+        buffer.append("\nTaskList: \n\n");
         while (itr.hasNext()){
-            buf.append(itr.next());
-        } return String.valueOf(buf);
+            buffer.append(count);
+            buffer.append(". ");
+            buffer.append(itr.next());
+            count++;
+        } return String.valueOf(buffer);
     }
 
     @Override

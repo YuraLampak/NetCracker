@@ -23,7 +23,7 @@ public class Tasks {
      * @return
      */
     public static Iterable<Task> incoming(Iterable<Task> tasks, Date start, Date end) throws TaskException {
-        Iterable<Task> data = null;
+        Iterable<Task> data;
         try {
             data = tasks.getClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {

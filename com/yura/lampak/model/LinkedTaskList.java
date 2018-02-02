@@ -2,6 +2,7 @@ package com.yura.lampak.model;
 
 
 import java.io.*;
+import java.util.Iterator;
 
 
 /**
@@ -81,6 +82,17 @@ public class LinkedTaskList extends TaskList {
         } return false;
     }
 
+    public void removeAll(){
+        for (Node x = firstNode; x != null; ) {
+            Node next = x.getNextElement();
+            x.item = null;
+            x.setNextElement(null);
+            x.setPreviousElement(null);
+            x = next;
+        }
+        firstNode = lastNode = null;
+        size = 0;
+    }
 
     /**
      * Returns task of this TaskList on specified ID.

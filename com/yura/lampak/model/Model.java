@@ -31,11 +31,4 @@ public class Model {
     public TaskList getTaskList() {
         return taskList;
     }
-
-    public boolean checkForEmpty(){
-        if (taskList == null || taskList.size() == 0){
-            System.out.println("TaskList is empty");
-            return true;
-        } return false;
-    }
 }

@@ -78,93 +78,52 @@ public class ConsoleController implements Controller {
                 }
                 theView.inputIsRepeated();
                 if (getInputState()){
-                    theView.inputStartTime();
-                    start = getInputTime();
-                    theView.inputEndTime();
-                    end = getInputTime();
-                    theView.inputInterval();
-                    interval = getInputInterval();
-                    theModel.setTask(title, start, end, interval);
-                    theView.inputState();
-                    theModel.getTask().setActive(getInputState());
-                    theModel.getTaskList().add(theModel.getTask());
-                    writeListToFile();
-                    theView.successfulCreateTask();
-                    logger.info("created task");
-                    backAction();
-                    execute();
-                    break;
+                    createRepeatTask();
+                } else {
+                    createTask();
                 }
-                theView.inputTime();
-                time = getInputTime();
-                theModel.setTask(title, time);
-                theView.inputState();
-                theModel.getTask().setActive(getInputState());
-                theModel.getTaskList().add(theModel.getTask());
-                writeListToFile();
-                theView.successfulCreateTask();
-                logger.info("created task");
                 backAction();
                 execute();
                 break;
             case 2:
-                if (theModel.checkForEmpty()){
+                if (checkForEmpty()){
+                    theView.printTaskList(theModel.getTaskList(), theModel.getTaskList().size());
+                    temp = getExistTask();
+                    if (checkForBack(temp)){
+                        execute();
+                        break;
+                    }
+                    theView.printTask(theModel.getTask(temp));
+                    theView.inputOptionToChangeTask(theModel.getTask(temp).isRepeated());
+                    changeExistTask(temp, theModel.getTask(temp).isRepeated());
+                } else {
                     backAction();
-                    execute();
-                    break;
                 }
-                theView.printTaskList(theModel.getTaskList());
-                temp = getExistTask();
-                if (checkForBack(temp)) {
-                    execute();
-                    break;
-                }
-                theView.printTask(theModel.getTask(temp));
-                theView.inputOptionToChangeTask(theModel.getTask(temp).isRepeated());
-                changeExistTask(temp, theModel.getTask(temp).isRepeated());
                 execute();
                 break;
             case 3:
-                if (theModel.checkForEmpty()){
+                if (checkForEmpty()){
+                    theView.inputRemove();
+                    removeActions();
+                } else {
                     backAction();
                     execute();
-                    break;
                 }
-                theView.printTaskList(theModel.getTaskList());
-                temp = getExistTask();
-                if (temp < 0) {
-                    execute();
-                    break;
-                }
-                if (temp > theModel.getTaskList().size()){
-                    theView.incorrectNumberOfTask();
-                    execute();
-                    break;
-                }
-                removeTask(theModel.getTaskList().getTask(temp));
-                backAction();
-                execute();
                 break;
             case 4:
-                if (theModel.checkForEmpty()){
-                    backAction();
-                    execute();
-                    break;
+                if (checkForEmpty()){
+                    theView.printTaskList(theModel.getTaskList(), theModel.getTaskList().size());
                 }
-                theView.printTaskList(theModel.getTaskList());
-                System.out.print("size: " + theModel.getTaskList().size());
                 backAction();
                 execute();
                 break;
             case 5:
-                if (theModel.checkForEmpty()){
+                if (checkForEmpty()){
+                    theView.inputPeriodForCalendar();
+                    createCalendar();
+                } else {
                     backAction();
-                    execute();
-                    break;
                 }
-                theView.inputPeriodForCalendar();
-                createCalendar();
-                backAction();
                 execute();
                 break;
             default:
@@ -174,68 +133,79 @@ public class ConsoleController implements Controller {
         }
     }
 
+    private boolean checkForEmpty() throws TaskException {
+        if (theModel.getTaskList() == null || theModel.getTaskList().size() == 0){
+            theView.outEmptyList();
+            return false;
+        } return true;
+    }
+
+    private void createTask() throws TaskException {
+        theView.inputTime();
+        time = getInputTime();
+        theModel.setTask(title, time);
+        theView.inputState();
+        theModel.getTask().setActive(getInputState());
+        theModel.getTaskList().add(theModel.getTask());
+        writeListToFile();
+        theView.successfulCreateTask();
+    }
+
+    private void createRepeatTask() throws TaskException {
+        theView.inputStartTime();
+        start = getInputTime();
+        theView.inputEndTime();
+        end = checkEndBeforeStart(start);
+        theView.inputInterval();
+        interval = getInputInterval();
+        theModel.setTask(title, start, end, interval);
+        theView.inputState();
+        theModel.getTask().setActive(getInputState());
+        theModel.getTaskList().add(theModel.getTask());
+        writeListToFile();
+        theView.successfulCreateTask();
+    }
+
     private void changeExistTask (int numOfTask, boolean isRepeat) throws TaskException {
         switch (getParseItem()) {
             case 0:
                 break;
             case 1:
-                title = getInputTitle();
-                theModel.getTask(numOfTask).setTitle(title);
-                writeListToFile();
-                theView.successfulChangedTask();
+                changeTitle(numOfTask);
                 backAction();
                 break;
             case 2:
                 if (isRepeat) {
                     theView.inputStartTime();
-                    start = getInputTime();
-                    theModel.getTask(numOfTask).setTime(start, theModel.getTask(numOfTask).getEndTime(),
-                            theModel.getTask(numOfTask).getRepeatInterval());
-                    writeListToFile();
-                    theView.successfulChangedTask();
+                    changeStartTime(numOfTask);
                     backAction();
                     break;
                 } else {
                     theView.inputTime();
-                    time = getInputTime();
-                    theModel.getTask(numOfTask).setTime(time);
-                    writeListToFile();
-                    theView.successfulChangedTask();
+                    changeTime(numOfTask);
                     backAction();
                     break;
                 }
             case 3:
                 if (isRepeat){
                     theView.inputEndTime();
-                    end = getInputTime();
-                    theModel.getTask(numOfTask).setTime(theModel.getTask(numOfTask).getStartTime(), end,
-                            theModel.getTask(numOfTask).getRepeatInterval());
-                    writeListToFile();
-                    theView.successfulChangedTask();
+                    changeEndTime(numOfTask);
                     backAction();
                     break;
                 } else {
                     theView.inputState();
-                    theModel.getTask(numOfTask).setActive(getInputState());
-                    writeListToFile();
-                    theView.successfulChangedTask();
+                    changeState(numOfTask);
                     backAction();
                     break;
                 }
             case 4:
                 theView.inputInterval();
-                interval = getInputInterval();
-                theModel.getTask(numOfTask).setTime(theModel.getTask(numOfTask).getStartTime(),
-                        theModel.getTask(numOfTask).getEndTime(), interval);
-                writeListToFile();
-                theView.successfulChangedTask();
+                changeInterval(numOfTask);
                 backAction();
                 break;
             case 5:
                 theView.inputState();
-                theModel.getTask(numOfTask).setActive(getInputState());
-                writeListToFile();
-                theView.successfulChangedTask();
+                changeState(numOfTask);
                 backAction();
                 break;
             default:
@@ -245,25 +215,75 @@ public class ConsoleController implements Controller {
         }
     }
 
+    private void changeTitle(int numOfTask) throws TaskException {
+        title = getInputTitle();
+        theModel.getTaskList().getTask(numOfTask).setTitle(title);
+        writeListToFile();
+        theView.successfulChangedTask();
+    }
+
+    private void changeTime(int numOfTask) throws TaskException {
+        time = getInputTime();
+        theModel.getTask(numOfTask).setTime(time);
+        writeListToFile();
+        theView.successfulChangedTask();
+    }
+
+    private void changeStartTime(int numOfTask) throws TaskException {
+        start = getInputTime();
+        theModel.getTask(numOfTask).setTime(time, theModel.getTask(numOfTask).getEndTime(),
+                theModel.getTask(numOfTask).getRepeatInterval());
+        writeListToFile();
+        theView.successfulChangedTask();
+    }
+
+    private void changeEndTime(int numOfTask) throws TaskException {
+        end = checkEndBeforeStart(theModel.getTask(numOfTask).getStartTime());
+        theModel.getTask(numOfTask).setTime(theModel.getTask(numOfTask).getStartTime(), end,
+                theModel.getTask(numOfTask).getRepeatInterval());
+        writeListToFile();
+        theView.successfulChangedTask();
+    }
+
+    private void changeState(int numOfTask) throws TaskException {
+        theModel.getTask(numOfTask).setActive(getInputState());
+        writeListToFile();
+        theView.successfulChangedTask();
+    }
+
+    private void changeInterval(int numOfTask) throws TaskException {
+        interval = getInputInterval();
+        theModel.getTask(numOfTask).setTime(theModel.getTask(numOfTask).getStartTime(),
+                theModel.getTask(numOfTask).getEndTime(), interval);
+        writeListToFile();
+        theView.successfulChangedTask();
+    }
+
     private void createCalendar() throws TaskException{
         end = new Date();
         switch (getParseItem()){
+            case 0:
+                break;
             case 1:
                 end.setTime(end.getTime() + 86400*1000);
                 theView.printCalendar(Tasks.calendar(theModel.getTaskList(), new Date(), end));
+                backAction();
                 break;
             case 2:
                 end.setTime(end.getTime() + 86400*1000*3);
                 theView.printCalendar(Tasks.calendar(theModel.getTaskList(), new Date(), end));
+                backAction();
                 break;
             case 3:
                 end.setTime(end.getTime() + 86400*1000*7);
                 theView.printCalendar(Tasks.calendar(theModel.getTaskList(), new Date(), end));
+                backAction();
                 break;
             case 4:
                 theView.inputEndTime();
                 end = getInputTime();
                 theView.printCalendar(Tasks.calendar(theModel.getTaskList(), new Date(), end));
+                backAction();
                 break;
             default:
                 theView.incorrectItem();
@@ -287,6 +307,15 @@ public class ConsoleController implements Controller {
         } while (true);
     }
 
+    private Date checkEndBeforeStart(Date start){
+        do {
+            end = getInputTime();
+            if (end.compareTo(start)<=0){
+                theView.errorEndBeforeStart();
+            } else return end;
+        } while (true);
+    }
+
     private int getParseItem(){
         do {
             try {
@@ -299,7 +328,7 @@ public class ConsoleController implements Controller {
 
     private int getInputInterval(){
         try {
-            interval = Integer.parseInt(theView.getUserInput());
+            interval = Integer.parseInt(theView.getUserInput());     //интервал в минутах
         } catch (NumberFormatException e){
             theView.errorInterval();
             getInputInterval();
@@ -335,7 +364,7 @@ public class ConsoleController implements Controller {
         } while (true);
     }
 
-    private int getExistTask() {
+    private int getExistTask() throws TaskException {
         int temp;
         theView.inputExistTask();
         do {
@@ -343,9 +372,48 @@ public class ConsoleController implements Controller {
                 temp = Integer.parseInt(theView.getUserInput()) - 1;
                 if (temp >= theModel.getTaskList().size() | temp < -1) {
                     theView.incorrectNumberOfTask();
-                } else return temp;
+                } else break;
             } catch (IllegalArgumentException e) {
-                theView.errorExistTask();
+                theView.invalidInputNumber();
+            }
+        } while (true);
+        return temp;
+    }
+
+    private void removeActions() throws TaskException {
+        switch (getParseItem()){
+            case 0:
+                execute();
+                break;
+            case 1:
+                removeByOne();
+                execute();
+                break;
+            case 2:
+                removeAll();
+                backAction();
+                execute();
+                break;
+            default:
+                theView.incorrectItem();
+                removeActions();
+                break;
+        }
+    }
+
+    private void removeByOne() throws TaskException {
+        int numTask;
+        theView.printTaskList(theModel.getTaskList(), theModel.getTaskList().size());
+        numTask = getExistTask();
+        if (checkForBack(numTask)) {
+            return;
+        }
+        do {
+            if (numTask > theModel.getTaskList().size()){
+                theView.incorrectNumberOfTask();
+            } else {
+                removeTask(theModel.getTaskList().getTask(numTask));
+                break;
             }
         } while (true);
     }
@@ -359,6 +427,14 @@ public class ConsoleController implements Controller {
             theView.fallingRemove();
         }
     }
+
+    private void removeAll() throws TaskException {
+        theModel.getTaskList().removeAll();
+        writeListToFile();
+        theModel.setTaskList(readListFromFile());
+        theView.successfulRemoveTask();
+    }
+
 
     private boolean checkForBack(String str){ return str.equals("0"); }
 

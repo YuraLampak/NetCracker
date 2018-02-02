@@ -8,6 +8,6 @@ import java.util.*;
 public interface View {
     void printMenu();
     void printTask(Task task);
-    void printTaskList(TaskList task);
+    void printTaskList(TaskList task, int size);
     void printCalendar(SortedMap<Date, Set<Task>> calendar);
 }
