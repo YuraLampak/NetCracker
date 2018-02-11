@@ -20,7 +20,7 @@ public class Tasks {
      * @param tasks is list of tasks, in which we carry out a selection of tasks
      * @param start is start point of range
      * @param end   is end point of range
-     * @return
+     * @return list of tasks which have to performed in predetermined period
      */
     public static Iterable<Task> incoming(Iterable<Task> tasks, Date start, Date end) throws TaskException {
         Iterable<Task> data;
@@ -33,8 +33,10 @@ public class Tasks {
         Task task;
         while (itr.hasNext()) {
             task = itr.next();
-            if (task.nextTimeAfter(start) != null && end.compareTo(task.nextTimeAfter(start)) >= 0)
-                ((TaskList)data).add(task);
+            if (task.isActive()) {
+                if (task.nextTimeAfter(start) != null && end.compareTo(task.nextTimeAfter(start)) >= 0)
+                    ((TaskList) data).add(task);
+            }
         } return data;
     }
 

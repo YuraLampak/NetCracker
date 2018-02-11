@@ -9,9 +9,9 @@ import java.util.Iterator;
 
 
 public class TaskIO {
-    private static final int DAY = 86400;
-    private static final int HOUR = 3600;
-    private static final int MINUTE = 60;
+    private static final int DAY = 1440;
+    private static final int HOUR = 60;
+    private static final int MINUTE = 1;
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
     public static void write(TaskList tasks, OutputStream out) throws TaskException {
@@ -82,8 +82,8 @@ public class TaskIO {
     private static void intervalFormat(int seconds, PrintWriter pw) {
         int currentDay = seconds / DAY;
         int currentHour = seconds % DAY / HOUR;
-        int currentMinute = seconds % HOUR / MINUTE;
-        int currentSecond = seconds % MINUTE;
+        int currentMinute = seconds % HOUR;             // remove "/ MINUTE"
+        //int currentSecond = seconds % MINUTE;
         if (currentDay != 0) {
             if (currentDay > 1) {
                 pw.print(currentDay + " days");
@@ -104,13 +104,13 @@ public class TaskIO {
             } else
                 pw.print(currentMinute + " minute");
         }
-        if (currentSecond != 0) {
-            if ((currentDay > 0) || (currentHour > 0) || (currentMinute > 0)) pw.print(" ");
-            if (currentSecond > 1) {
-                pw.print(currentSecond + " seconds");
-            } else
-                pw.print(currentSecond + " second");
-        }
+//        if (currentSecond != 0) {
+//            if ((currentDay > 0) || (currentHour > 0) || (currentMinute > 0)) pw.print(" ");
+//            if (currentSecond > 1) {
+//                pw.print(currentSecond + " seconds");
+//            } else
+//                pw.print(currentSecond + " second");
+//        }
     }
 
     public static void write(TaskList tasks, Writer out) {
@@ -126,7 +126,7 @@ public class TaskIO {
                 pw.print("] to [");
                 pw.print(DATE_FORMAT.format(task.getEndTime()));
                 pw.print("] every [");
-                intervalFormat(task.getRepeatInterval(), pw);
+                intervalFormat(task.getRepeatInterval(), pw);    //changed
             } else {
                 pw.print(" at [");
                 pw.print(DATE_FORMAT.format(task.getTime()));

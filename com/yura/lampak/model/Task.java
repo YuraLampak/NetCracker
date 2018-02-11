@@ -73,13 +73,13 @@ public class Task implements Cloneable, Serializable {
      * @param end      set time until task is active
      * @param interval set time to repeat task
      */
-    public Task(String title, Date start, Date end, int interval) throws TaskException {
+    public Task(String title, Date start, Date end, int interval) {
         if (interval < 0){
-            throw new TaskException("interval is incorrect");
+            System.out.println("interval is incorrect");
         }
         this.title = title;
         this.start = start;
-        this.interval = interval;
+        this.interval = interval*60;
         this.end = end;
         isRepeat = true;
     }
@@ -165,7 +165,7 @@ public class Task implements Cloneable, Serializable {
      * @return <tt>end</tt> time to repeate if task is repeated
      */
     public int getRepeatInterval() {
-        return (isRepeated() ? interval : 0);
+        return (isRepeated() ? interval/60 : 0);
     }
 
     /**
@@ -276,13 +276,14 @@ public class Task implements Cloneable, Serializable {
     @Override
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        SimpleDateFormat form = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        buf.append("\tTask ")
+        SimpleDateFormat form = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        buf.append("\tTask: ")
                 .append(getTitle())
                 .append((isRepeated() ? ("\n\tStart: " + form.format(getStartTime())
-                        + "\tEnd: " + form.format(getEndTime())
-                        + "\tInterval: " + getRepeatInterval()/60 + " minute") :
-                        ("\n\tTime to go: " + getTime())))
+                        + "\t End: " + form.format(getEndTime())
+                        + "\n\tInterval: " + getRepeatInterval()
+                        + (getRepeatInterval() > 1 ? " minutes" : " minute"))
+                        : ("\n\tTime to go: " + getTime())))
                 .append("\n\tState: ")
                 .append(isActive() ? " active\n\n" : " passive\n\n");
         return String.valueOf(buf);
