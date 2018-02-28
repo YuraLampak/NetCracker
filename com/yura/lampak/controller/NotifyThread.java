@@ -19,15 +19,6 @@ import java.util.*;
 public class NotifyThread extends Thread {
 
     /**
-     * Instance of class ConsoleController
-     */
-    private ConsoleController theController;
-    /**
-     * Instance of class ConsoleView
-     */
-    private ConsoleView theView;
-
-    /**
      * A map for storing selected tasks that must be performed at the moment
      */
     private SortedMap<Date, Set<Task>> notifyMap;
@@ -36,13 +27,9 @@ public class NotifyThread extends Thread {
      * Constructor gets instance of controller and view. Also, it
      * initializes a <tt>notifyMap</tt> for storage tasks.
      *
-     * @param theController is instance of <tt>ConsoleController</tt>
-     * @param theView is instance of <tt>ConsoleView</tt>
      */
-    NotifyThread(ConsoleController theController, ConsoleView theView) {
+    NotifyThread() {
         super("notifyThread");
-        this.theController = theController;
-        this.theView = theView;
         notifyMap = new TreeMap<>();
     }
 
@@ -63,7 +50,7 @@ public class NotifyThread extends Thread {
                 break;
             }
             try {
-                taskList = theController.readListFromFile();
+                taskList = ConsoleController.readListFromFile();
                 currentTime = new Date();
                 startTime.setTime(currentTime.getTime() - balanceTime);
                 endTime.setTime(currentTime.getTime() + balanceTime);
@@ -89,13 +76,13 @@ public class NotifyThread extends Thread {
      */
     private void notifyUser(Set<Task> tasks) throws TaskException {
         Task temp;
-        theView.printTasksToGo(tasks);
+        ConsoleView.printTasksToGo(tasks);
         Iterator<Task> itr = tasks.iterator();
         while (itr.hasNext()){
             temp = itr.next();
             if (!temp.isRepeated()){
                 try {
-                    theController.removeTask(temp);
+                    RemoveTaskController.removeTask(temp);
                 } catch (TaskException e) {
                     e.printStackTrace();
                 }

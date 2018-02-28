@@ -18,12 +18,12 @@ public class ConsoleView implements View {
     /**
      * A few next variable is a items of menu.
      */
-    private final String createItem = "1. Create a new task";
-    private final String changeItem = "2. Change existing task";
-    private final String removeItem = "3. Remove task";
-    private final String showTasksItem = "4. Print list of tasks";
-    private final String showCalendarItem = "5. Calendar for period";
-    private final String exitItem = "0. Exit";
+    private static final String createItem = "1. Create a new task";
+    private static final String changeItem = "2. Change existing task";
+    private static final String removeItem = "3. Remove task";
+    private static final String showTasksItem = "4. Print list of tasks";
+    private static final String showCalendarItem = "5. Calendar for period";
+    private static final String exitItem = "0. Exit";
 
     /**
      * Special format for dates.
@@ -33,13 +33,12 @@ public class ConsoleView implements View {
     /**
      * Listener for getting user actions
      */
-    private final Scanner scanner;
+    private final static Scanner scanner = new Scanner(System.in);
 
     /**
      * Constructor creates instance of Scanner to gets user input.
      */
     public ConsoleView() {
-        scanner = new Scanner(System.in);
     }
 
     @Override
@@ -74,7 +73,7 @@ public class ConsoleView implements View {
      *
      * @return buffer of entered data
      */
-    public String getScannerBuffer() {
+    public static String getScannerBuffer() {
         return scanner.nextLine();
     }
 
@@ -179,7 +178,7 @@ public class ConsoleView implements View {
      *
      * @param tasks is set of tasks
      */
-    public void printTasksToGo(Set<Task> tasks){
+    public static void printTasksToGo(Set<Task> tasks){
         System.out.println("\n\n********************************************************");
         System.out.println("Alarm! Time to go next tasks :\n\n ");
         System.out.println(tasks.toString());

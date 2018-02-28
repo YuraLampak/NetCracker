@@ -20,13 +20,13 @@ public interface Controller {
      * This method must create <tt>repeating</tt> and <tt>non-repeating</tt> tasks
      * and add them to list of tasks.
      */
-    void createTaskByType() throws TaskException;
+    void createTask() throws TaskException;
 
     /**
      * This method must change existing task and save changes to list of tasks.
      *
      */
-    void changeExistingTask() throws TaskException;
+    void changeTask() throws TaskException;
 
     /**
      * This method must remove existing task from list of tasks and
